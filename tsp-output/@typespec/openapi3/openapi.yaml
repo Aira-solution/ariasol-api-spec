@@ -1,0 +1,337 @@
+openapi: 3.0.0
+info:
+  title: Aria Service
+  version: 0.0.0
+tags:
+  - name: account
+  - name: auth
+paths:
+  /api/account:
+    post:
+      tags:
+        - account
+      operationId: AccountService_create
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account.Account'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account.Account'
+      security:
+        - BearerAuth: []
+    get:
+      tags:
+        - account
+      operationId: AccountService_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account.Account'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+  /api/account/{id}:
+    delete:
+      tags:
+        - account
+      operationId: AccountService_delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - account
+      operationId: AccountService_put
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account.Account'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+  /api/member/exists:
+    get:
+      tags:
+        - auth
+      operationId: AuthService_exists
+      parameters:
+        - name: memberEmail
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Auth.Email'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: boolean
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/member/sign-in:
+    post:
+      tags:
+        - auth
+      operationId: AuthService_signIn
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth.SignInInfo'
+  /api/member/sign-up:
+    post:
+      tags:
+        - auth
+      operationId: AuthService_signUp
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth.SignUpInfo'
+  /api/member/verify-email/{code}:
+    post:
+      tags:
+        - auth
+      operationId: AuthService_verifyEmail
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+                required:
+                  - message
+                  - token
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Account.Account:
+      type: object
+      required:
+        - id
+        - alias
+        - bank
+        - accountNumber
+        - accountHolder
+      properties:
+        id:
+          type: integer
+        alias:
+          type: string
+          description: 별명
+        bank:
+          type: string
+          description: 은행 이름
+        accountNumber:
+          type: string
+          description: 계좌번호
+        accountHolder:
+          type: string
+          description: 예금주
+    Auth.Email:
+      type: string
+      format: email
+    Auth.Password:
+      type: string
+      minLength: 8
+    Auth.SignInInfo:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          $ref: '#/components/schemas/Auth.Email'
+        password:
+          $ref: '#/components/schemas/Auth.Password'
+    Auth.SignUpInfo:
+      type: object
+      required:
+        - email
+        - password
+        - nickname
+      properties:
+        email:
+          $ref: '#/components/schemas/Auth.Email'
+        password:
+          $ref: '#/components/schemas/Auth.Password'
+        nickname:
+          type: string
+    Auth.User:
+      type: object
+      required:
+        - email
+        - password
+        - nickname
+      properties:
+        email:
+          $ref: '#/components/schemas/Auth.Email'
+        password:
+          $ref: '#/components/schemas/Auth.Password'
+        nickname:
+          type: string
+    Building.Building:
+      type: object
+      required:
+        - id
+        - name
+        - address
+        - kind
+        - completedAt
+        - createdAt
+        - updatedAt
+        - managementCompaniesId
+        - memo
+        - feeAccount
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        kind:
+          type: string
+          enum:
+            - 집합건물
+            - 오피스텔
+            - 공동주택
+            - 빌라
+            - 기타
+        completedAt:
+          type: string
+          format: date
+          description: 완공일
+        createdAt:
+          type: string
+          format: date
+        updatedAt:
+          type: string
+          format: date
+        managementCompaniesId:
+          type: array
+          items:
+            type: integer
+        memo:
+          type: string
+          description: 빌딩에 대한 메모
+        feeAccount:
+          allOf:
+            - $ref: '#/components/schemas/Account.Account'
+          description: 관리비 계좌
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        errorCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+servers:
+  - url: http://localhost:8080
+    description: development
+    variables: {}
+  - url: http://ariasol.co.kr
+    description: production
+    variables: {}
