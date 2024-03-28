@@ -46,6 +46,11 @@ model Building {
     @maxLength(4)
     bubun: string;
 
+    /**
+     * 준공일(계약서에 명시하지 않은 경우 사용승인일)
+     */
+    completedAt: plainDate;
+
     createdAt: plainDate;
     updatedAt: plainDate;
     vendors: Vendor.Vendor[];
