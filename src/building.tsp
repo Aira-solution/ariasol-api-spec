@@ -64,5 +64,5 @@ model Building {
     /**
      * 관리비 입금일
      */
-    feeDepositDay: plainDate;
+    feeDepositDay: integer;
 }
