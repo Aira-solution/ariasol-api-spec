@@ -64,5 +64,7 @@ model Building {
     /**
      * 관리비 입금일
      */
+    @minValue(1)
+    @maxValue(31)
     feeDepositDay: integer;
 }
