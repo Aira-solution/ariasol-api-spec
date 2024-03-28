@@ -46,35 +46,6 @@ model Building {
     @maxLength(4)
     bubun: string;
 
-    /**
-     * 주용도 코드
-     * 참고: https://www.code.go.kr/stdcode/normalCodeL.do
-     * doc 폴더에서도 확인 가능
-     */
-    @minLength(5)
-    @maxLength(5)
-    mainPurposeCode: string;
-
-    /**
-     * 주용도 코드명
-     */
-    mainPurposeName: string;
-
-    /**
-     * 허가일
-     */
-    permitAt: plainDate;
-
-    /**
-     * 사용승인일
-     */
-    useAt: plainDate;
-
-    /**
-     * 착공일
-     */
-    startAt: plainDate;
-
     createdAt: plainDate;
     updatedAt: plainDate;
     vendors: Vendor.Vendor[];
@@ -94,14 +65,4 @@ model Building {
      * 관리비 입금일
      */
     feeDepositDay: plainDate;
-
-    /**
-     * 지상층수
-     */
-    floorCount: integer;
-
-    /**
-     * 지하층수
-     */
-    basementCount: integer;
 }
