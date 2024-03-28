@@ -23,17 +23,19 @@ model Lessee {
 
     /**
      * 사업자 등록번호
+     * 등록 하지 않을 수도 있음. (개인임차인)
      *
      * @pattern ^[0-9]{3}-[0-9]{2}-[0-9]{5}$
      */
     @pattern("^[0-9]{3}-[0-9]{2}-[0-9]{5}$")
-    businessRegistrationNumber: string;
+    businessRegistrationNumber?: string;
 
     /**
      * 사업자명
+     * 등록 하지 않을 수도 있음. (개인임차인)
      */
     @minLength(1)
-    businessName: string;
+    businessName?: string;
 
     /**
      * 휴대폰 번호
