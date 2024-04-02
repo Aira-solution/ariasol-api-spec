@@ -5,12 +5,14 @@
   "scripts": {
     "compile": "tsp compile src",
     "watch": "tsp compile src --watch",
-    "format": "tsp format src"
+    "format": "tsp format src",
+    "serve": "http-server ."
   },
   "dependencies": {
     "@typespec/http": "latest",
     "@typespec/openapi3": "latest",
-    "@typespec/rest": "latest"
+    "@typespec/rest": "latest",
+    "http-server": "^14.1.1"
   },
   "private": true,
   "devDependencies": {
