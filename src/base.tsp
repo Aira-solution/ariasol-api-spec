@@ -19,7 +19,7 @@ interface AriaResourceOperation<Entity, Error> {
     create(...Entity): (Entity & CreatedResponse) | Error;
     @useAuth(BearerAuth)
     @get
-    list(): Entity | Error;
+    list(): Entity[] | Error;
     @useAuth(BearerAuth)
     @delete
     delete(@path id: integer): void | Error;
