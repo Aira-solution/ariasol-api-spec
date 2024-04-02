@@ -5,6 +5,7 @@ info:
 tags:
   - name: account
   - name: auth
+  - name: vendor-category
 paths:
   /api/account:
     post:
@@ -44,7 +45,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account.Account'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account.Account'
         default:
           description: An unexpected error response.
           content:
@@ -198,6 +201,108 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/vendor-category:
+    post:
+      tags:
+        - vendor-category
+      operationId: VendorCategoryService_create
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorCategory.VendorCategoryResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorCategory.CreateVendorCateogry'
+      security:
+        - BearerAuth: []
+    get:
+      tags:
+        - vendor-category
+      operationId: VendorCategoryService_list
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendorCategory.VendorCategoryResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+  /api/vendor-category/{id}:
+    delete:
+      tags:
+        - vendor-category
+      operationId: VendorCategoryService_delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+    put:
+      tags:
+        - vendor-category
+      operationId: VendorCategoryService_put
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorCategory.VendorCategoryResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorCategory.UpdateVendorCateogry'
+      security:
+        - BearerAuth: []
 components:
   schemas:
     Account.Account:
@@ -271,13 +376,17 @@ components:
         - id
         - name
         - address
-        - kind
+        - lotAddress
+        - bjdongCode
+        - bonbun
+        - bubun
         - completedAt
         - createdAt
         - updatedAt
-        - managementCompaniesId
+        - vendors
         - memo
         - feeAccount
+        - feeDepositDay
       properties:
         id:
           type: integer
@@ -285,28 +394,38 @@ components:
           type: string
         address:
           type: string
-        kind:
+          description: 건물 도로명 주소
+        lotAddress:
           type: string
-          enum:
-            - 집합건물
-            - 오피스텔
-            - 공동주택
-            - 빌라
-            - 기타
+          description: 건물 지번 주소
+        bjdongCode:
+          type: string
+          maxLength: 10
+          description: |-
+            법정동 코드
+            참조: https://www.code.go.kr/stdcode/regCodeL.do
+        bonbun:
+          type: string
+          maxLength: 4
+          description: 번
+        bubun:
+          type: string
+          maxLength: 4
+          description: 지
         completedAt:
           type: string
           format: date
-          description: 완공일
+          description: 준공일(계약서에 명시하지 않은 경우 사용승인일)
         createdAt:
           type: string
           format: date
         updatedAt:
           type: string
           format: date
-        managementCompaniesId:
+        vendors:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/Vendor.Vendor'
         memo:
           type: string
           description: 빌딩에 대한 메모
@@ -314,6 +433,11 @@ components:
           allOf:
             - $ref: '#/components/schemas/Account.Account'
           description: 관리비 계좌
+        feeDepositDay:
+          type: integer
+          minimum: 1
+          maximum: 31
+          description: 관리비 입금일
     Error:
       type: object
       required:
@@ -324,6 +448,68 @@ components:
           format: int32
         message:
           type: string
+    Vendor.Vendor:
+      type: object
+      required:
+        - name
+        - phoneNumber
+        - email
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: 이름
+        phoneNumber:
+          type: string
+          pattern: ^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$
+          description: 전화번호
+        email:
+          type: string
+          format: email
+          description: 이메일
+        businessNumber:
+          type: string
+          pattern: ^[0-9]{10}$ | ^[0-9]{3}-[0-9]{2}-[0-9]{5}$
+          description: 사업자 번호
+    VendorCategory.CreateVendorCateogry:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 30
+    VendorCategory.UpdateVendorCateogry:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 30
+    VendorCategory.VendorCategory:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 30
+    VendorCategory.VendorCategoryResponse:
+      type: object
+      required:
+        - name
+        - id
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 30
+        id:
+          type: integer
   securitySchemes:
     BearerAuth:
       type: http
