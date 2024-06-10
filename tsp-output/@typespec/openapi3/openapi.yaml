@@ -6,6 +6,7 @@ tags:
   - name: account
   - name: auth
   - name: vendor-category
+  - name: room-metering-group
 paths:
   /api/account:
     post:
@@ -101,6 +102,181 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+  /api/building/{buildingId}/roomMeteringGroup:
+    get:
+      tags:
+        - room-metering-group
+      operationId: RoomMeteringGroupService_findRoomMeteringGroups
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomMetering.RoomMeteringGroupResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+  /api/building/{buildingId}/roomMeteringGroup/roomMetering:
+    get:
+      tags:
+        - room-metering-group
+      operationId: RoomMeteringGroupService_findRoomMeteringSummary
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: roomMeteringGroupIds
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: true
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomMetering.RoomMeteringSummaryResponses'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - BearerAuth: []
+  /api/building/{buildingId}/roomMeteringGroup/{meteringAt}/{meteringType}:
+    post:
+      tags:
+        - room-metering-group
+      operationId: RoomMeteringGroupService_saveRoomMeterings
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: meteringAt
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: meteringType
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomMetering.RoomMeteringResponses'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/RoomMetering.CreateRoomMeteringRequest'
+      security:
+        - BearerAuth: []
+  /api/building/{buildingId}/roomMeteringGroup/{meteringGroupId}:
+    patch:
+      tags:
+        - room-metering-group
+      operationId: RoomMeteringGroupService_updateRoomMeteringGroup
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: meteringGroupId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomMetering.UpdateRoomMeteringGroupRequest'
+      security:
+        - BearerAuth: []
+  /api/building/{buildingId}/roomMeteringGroup/{meteringGroupId}/roomMetering:
+    patch:
+      tags:
+        - room-metering-group
+      operationId: RoomMeteringGroupService_updateRoomMeterings
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: meteringGroupId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/RoomMetering.UpdateRoomMeteringRequest'
       security:
         - BearerAuth: []
   /api/member/exists:
@@ -448,6 +624,126 @@ components:
           format: int32
         message:
           type: string
+    RoomMetering.CreateRoomMeteringRequest:
+      type: object
+      required:
+        - roomId
+        - metering
+      properties:
+        roomId:
+          type: integer
+        metering:
+          type: integer
+    RoomMetering.RoomMeteringGroupResponse:
+      type: object
+      required:
+        - id
+        - buildingId
+        - meteringAt
+        - type
+      properties:
+        id:
+          type: integer
+        buildingId:
+          type: integer
+        meteringAt:
+          type: string
+        type:
+          type: string
+    RoomMetering.RoomMeteringResponse:
+      type: object
+      required:
+        - roomId
+        - meteringId
+        - metering
+      properties:
+        roomId:
+          type: integer
+        meteringId:
+          type: integer
+        metering:
+          type: integer
+    RoomMetering.RoomMeteringResponses:
+      type: object
+      required:
+        - id
+        - buildingId
+        - meteringAt
+        - type
+        - roomMeterings
+      properties:
+        id:
+          type: integer
+        buildingId:
+          type: integer
+        meteringAt:
+          type: string
+        type:
+          type: string
+        roomMeterings:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoomMetering.RoomMeteringResponse'
+    RoomMetering.RoomMeteringSummaryResponse:
+      type: object
+      required:
+        - roomId
+        - roomName
+        - meteringGroupId
+        - roomMeteringId
+        - metering
+        - meteringType
+        - meteringAt
+      properties:
+        roomId:
+          type: integer
+        roomName:
+          type: string
+        meteringGroupId:
+          type: integer
+          nullable: true
+        roomMeteringId:
+          type: integer
+          nullable: true
+        metering:
+          type: integer
+          nullable: true
+        meteringType:
+          type: string
+          nullable: true
+        meteringAt:
+          type: string
+          nullable: true
+    RoomMetering.RoomMeteringSummaryResponses:
+      type: object
+      required:
+        - response
+      properties:
+        response:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/RoomMetering.RoomMeteringSummaryResponse'
+    RoomMetering.UpdateRoomMeteringGroupRequest:
+      type: object
+      properties:
+        meteringAt:
+          type: string
+          nullable: true
+        meteringType:
+          type: string
+          nullable: true
+    RoomMetering.UpdateRoomMeteringRequest:
+      type: object
+      required:
+        - id
+        - metering
+      properties:
+        id:
+          type: integer
+        metering:
+          type: integer
     Vendor.Vendor:
       type: object
       required:

@@ -6,6 +6,7 @@ import "./account.tsp";
 import "./auth.tsp";
 import "./building.tsp";
 import "./vendor-category.tsp";
+import "./room-metering.tsp";
 
 using TypeSpec.Http;
 using TypeSpec.Rest;
