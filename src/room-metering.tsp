@@ -159,7 +159,7 @@ model RoomMeteringSummaryResponse {
 interface RoomMeteringGroupService {
     @useAuth(BearerAuth)
     @get
-    findRoomMeteringGroups(@path buildingId: integer) : (RoomMeteringGroupResponse[]) | Error;
+    findRoomMeteringGroups(@path buildingId: integer, @query type: string) : (RoomMeteringGroupResponse[]) | Error;
 
     @useAuth(BearerAuth)
     @patch
