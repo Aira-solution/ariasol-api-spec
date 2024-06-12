@@ -180,4 +180,9 @@ interface RoomMeteringGroupService {
     @patch
     @route("/{meteringGroupId}/roomMetering")
     updateRoomMeterings(@path buildingId: integer, @path meteringGroupId: integer, @body request: UpdateRoomMeteringRequest[]) : void | Error;
+
+    @useAuth(BearerAuth)
+    @post
+    @route("/{meteringGroupId}")
+    addRoomMeterings(@path buildingId: integer, @path meteringGroupId: integer, @body request: CreateRoomMeteringRequest[]): (RoomMeteringResponses) | Error
 }
