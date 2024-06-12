@@ -131,7 +131,7 @@ model RoomMeteringSummaryResponse {
     /*
     * 계량 그룹 ID, 선택 사항
     */
-    meteringGroupId: integer | null;
+    meteringGroupId: integer;
 
     /*
     * 방 계량 ID, 선택 사항
@@ -146,12 +146,12 @@ model RoomMeteringSummaryResponse {
     /*
     * 계량 유형, 선택 사항
     */
-    meteringType: string | null;
+    meteringType: string;
 
     /*
     * 계량 날짜, 선택 사항
     */
-    meteringAt: string | null;
+    meteringAt: string;
 }
 
 @route("/api/building/{buildingId}/roomMeteringGroup")
